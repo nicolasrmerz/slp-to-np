@@ -10,7 +10,7 @@ int main()
   //
   // npWriter.writeHeader("test.npy", SLPToNP::U8);
 
-  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp_parse_cpp/samples/offline.slp");
+  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline.slp");
   reader.read();
   // SLPToNP::Reader reader;
   return 0;

@@ -3,6 +3,7 @@
 #include <map>
 #include <cstdint>
 #include <fstream>
+#include <memory>
 #include "events/game_start.h"
 #include "events/payloads.h"
 
@@ -22,9 +23,10 @@ namespace SLPToNP {
       void read();
     private:
       std::ifstream fin;
-      SLPToNP::Payloads payloads;
-      SLPToNP::GameStart gameStart;
-      void _read_ubjson();
+      uint32_t slpLen;
+      std::unique_ptr<SLPToNP::Payloads> payloads;
+      std::unique_ptr<SLPToNP::GameStart> gameStart;
+      void _read_ubjson_header();
   };
 }
 #endif
