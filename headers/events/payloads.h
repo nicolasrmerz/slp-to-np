@@ -24,7 +24,7 @@ namespace SLPToNP {
     public:
       void read(std::ifstream &fin);
     private:
-      void _readSizeMap(std::ifstream &fin, uint16_t payload_size);
+      void _readSizeMap(std::ifstream &fin, uint16_t payloadSize);
       std::unordered_map<PayloadByte, uint16_t> sizeMap;
 
   };
