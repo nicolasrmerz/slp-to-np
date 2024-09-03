@@ -1,4 +1,5 @@
 #include "utils/endian.h"
+#include "events/game_start.h"
 #include "reader.h"
 #include <cstring>
 static constexpr uint8_t ubjson_magic_bytes[] = {
@@ -32,7 +33,55 @@ void SLPToNP::Reader::_read_ubjson_header() {
   slpLen = endian_swap_32(slpLen);
 }
 
+void SLPToNP::Reader::_verifyAndSetPayloadSizes() {
+  std::string errString{};
+  uint16_t payloadSize{};
+
+  payloadSize = payloads->getGameStartSize();
+  if (payloadSize > sizeof(SLPToNP::GameStartStruct)) {
+    errString += "GameStart, ";
+  }
+  // To read the extra byte
+  gameStart->setPayloadSize(payloadSize+1);
+
+  if (errString.size()) {
+    std::string errMessage("Size specified in binary for payload(s) " + errString + " was/were larger than internal struct(s).");
+    throw SLPToNP::ReaderException(errMessage.c_str());
+  }
+}
+
+void SLPToNP::Reader::_readLoop() {
+  SLPToNP::PayloadByte payloadByte{};
+  while(true) {
+    payloadByte = static_cast<SLPToNP::PayloadByte>(fin.peek());
+
+    switch(payloadByte)
+    {
+    case SLPToNP::GAMESTART:
+      gameStart->read(fin);
+      break;
+    // TODO: These are placeholders while they are not implemented
+    case SLPToNP::PREFRAME:
+    case SLPToNP::POSTFRAME:
+    case SLPToNP::GAMEEND:
+    case SLPToNP::FRAMESTART:
+    case SLPToNP::ITEMUPDATE:
+    case SLPToNP::FRAMEBOOKEND:
+    case SLPToNP::GECKOLIST:
+    case SLPToNP::MESSAGESPLITTER:
+      fin.ignore(payloads->getPayloadSize(payloadByte)+1);
+      break;
+    default:
+      return;
+    }
+  }
+}
+
 void SLPToNP::Reader::read() {
   _read_ubjson_header();
   payloads->read(fin);
+
+  _verifyAndSetPayloadSizes();
+
+  _readLoop();
 }

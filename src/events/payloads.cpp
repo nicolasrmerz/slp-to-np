@@ -18,6 +18,14 @@ void SLPToNP::Payloads::_readSizeMap(std::ifstream &fin, uint16_t payloadSize) {
   }
 }
 
+uint16_t SLPToNP::Payloads::getPayloadSize(SLPToNP::PayloadByte payloadByte) {
+  return sizeMap[payloadByte];
+}
+
+uint16_t SLPToNP::Payloads::getGameStartSize() {
+  return sizeMap[SLPToNP::GAMESTART];
+}
+
 void SLPToNP::Payloads::read(std::ifstream &fin) {
   uint8_t payloadByte{};
   uint16_t remainingPayloadSize{};

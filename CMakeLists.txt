@@ -9,6 +9,7 @@ src/reader.cpp
 src/numpy/numpy_writer.cpp
 src/events/game_start.cpp
 src/events/payloads.cpp
+src/events/common.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

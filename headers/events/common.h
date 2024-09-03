@@ -7,12 +7,14 @@
 namespace SLPToNP {
   class Event {
     public:
-      void read(std::ifstream stream);
-      void writeNPFloats(std::ofstream stream);
+      virtual void read(std::ifstream &fin) = 0;
+      void setPayloadSize(uint16_t size);
+      void writeNPFloats(std::ofstream &fout);
       // virtual void read(std::ifstream stream) = 0;
       // virtual void writeNPFloats(std::ofstream stream) = 0;
     protected:
       std::map<int32_t, long> writeOffsets;
+      uint16_t payloadSize{0};
   };
 }
 #endif

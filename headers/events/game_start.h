@@ -2,6 +2,7 @@
 #define EVENTGAMESTART_H_
 #include "events/common.h"
 #include <cstdint>
+#include <fstream>
 
 namespace SLPToNP {
   struct __attribute__((__packed__)) DashbackShieldDropFixesStruct {
@@ -22,7 +23,11 @@ namespace SLPToNP {
   };
 
   class GameStart : public SLPToNP::Event {
+    public:
+      void read(std::ifstream &fin);
 
+    protected:
+      GameStartStruct gameStartStruct{};
   };
 }
 

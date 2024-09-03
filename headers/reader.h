@@ -27,6 +27,8 @@ namespace SLPToNP {
       std::unique_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;
       void _read_ubjson_header();
+      void _verifyAndSetPayloadSizes();
+      void _readLoop();
   };
 }
 #endif

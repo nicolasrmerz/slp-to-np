@@ -23,6 +23,9 @@ namespace SLPToNP {
   class Payloads : public SLPToNP::Event {
     public:
       void read(std::ifstream &fin);
+      void setPayloadSize(uint16_t size){}
+      uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
+      uint16_t getGameStartSize();
     private:
       void _readSizeMap(std::ifstream &fin, uint16_t payloadSize);
       std::unordered_map<PayloadByte, uint16_t> sizeMap;
