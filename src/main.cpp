@@ -10,8 +10,12 @@ int main()
   //
   // npWriter.writeHeader("test.npy", SLPToNP::U8);
 
-  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline.slp");
-  reader.read();
+  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline_2.slp");
+  try {
+    reader.read();
+  } catch (const SLPToNP::ReaderException &e) {
+    std::cerr << e.what() << "\n";
+  }
   // SLPToNP::Reader reader;
   return 0;
 }

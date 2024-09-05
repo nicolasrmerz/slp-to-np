@@ -11,7 +11,7 @@ namespace SLPToNP {
   class ReaderException : public std::exception {
     public:
       ReaderException(const char * msg);
-      const char * what();
+      const char * what() const throw ();
     private:
       std::string message;
   };

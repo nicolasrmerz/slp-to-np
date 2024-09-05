@@ -8,7 +8,7 @@ static constexpr uint8_t ubjson_magic_bytes[] = {
 
 SLPToNP::ReaderException::ReaderException(const char * msg) : message(msg) {}
 
-const char * SLPToNP::ReaderException::what() {
+const char * SLPToNP::ReaderException::what() const throw () {
   return message.c_str();
 }
 
