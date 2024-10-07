@@ -1,6 +1,8 @@
 #include "utils/endian.h"
 #include "events/game_start.h"
 #include "reader.h"
+#include "slp.h"
+#include <sys/stat.h>
 #include <cstring>
 static constexpr uint8_t ubjson_magic_bytes[] = {
   0x7B, 0x55, 0x03, 0x72, 0x61, 0x77, 0x5B, 0x24, 0x55, 0x23, 0x6C, 
@@ -13,9 +15,13 @@ const char * SLPToNP::ReaderException::what() const throw () {
 }
 
 SLPToNP::Reader::Reader(const char* filename) {
+  struct stat buffer;   
+  if (stat (filename, &buffer) != 0) {
+    throw SLPToNP::ReaderException("Filename does not exist.");
+  }
   fin.open(filename);
-  payloads = std::make_unique<SLPToNP::Payloads>();
-  gameStart = std::make_unique<SLPToNP::GameStart>();
+  // payloads = std::make_unique<SLPToNP::Payloads>();
+  // gameStart = std::make_unique<SLPToNP::GameStart>();
 }
 
 SLPToNP::Reader::~Reader() {
@@ -33,24 +39,8 @@ void SLPToNP::Reader::_read_ubjson_header() {
   slpLen = endian_swap_32(slpLen);
 }
 
-void SLPToNP::Reader::_verifyAndSetPayloadSizes() {
-  std::string errString{};
-  uint16_t payloadSize{};
 
-  payloadSize = payloads->getGameStartSize();
-  if (payloadSize > sizeof(SLPToNP::GameStartStruct)) {
-    errString += "GameStart, ";
-  }
-  // To read the extra byte
-  gameStart->setPayloadSize(payloadSize+1);
-
-  if (errString.size()) {
-    std::string errMessage("Size specified in binary for payload(s) " + errString + " was/were larger than internal struct(s).");
-    throw SLPToNP::ReaderException(errMessage.c_str());
-  }
-}
-
-void SLPToNP::Reader::_readLoop() {
+void SLPToNP::Reader::_readLoop(std::shared_ptr<SLPToNP::SLP> slp) {
   SLPToNP::PayloadByte payloadByte{};
   while(true) {
     payloadByte = static_cast<SLPToNP::PayloadByte>(fin.peek());
@@ -58,7 +48,8 @@ void SLPToNP::Reader::_readLoop() {
     switch(payloadByte)
     {
     case SLPToNP::GAMESTART:
-      gameStart->read(fin);
+      // gameStart->read(fin);
+      slp->readGameStart(fin);
       break;
     // TODO: These are placeholders while they are not implemented
     case SLPToNP::PREFRAME:
@@ -69,7 +60,8 @@ void SLPToNP::Reader::_readLoop() {
     case SLPToNP::FRAMEBOOKEND:
     case SLPToNP::GECKOLIST:
     case SLPToNP::MESSAGESPLITTER:
-      fin.ignore(payloads->getPayloadSize(payloadByte)+1);
+      // fin.ignore(payloads->getPayloadSize(payloadByte)+1);
+      fin.ignore(slp->getPayloadSize(payloadByte)+1);
       break;
     default:
       return;
@@ -78,10 +70,10 @@ void SLPToNP::Reader::_readLoop() {
 }
 
 void SLPToNP::Reader::read() {
+  std::shared_ptr<SLPToNP::SLP> slp = std::make_shared<SLPToNP::SLP>();
   _read_ubjson_header();
-  payloads->read(fin);
 
-  _verifyAndSetPayloadSizes();
+  slp->readPayload(fin);
 
-  _readLoop();
+  _readLoop(slp);
 }

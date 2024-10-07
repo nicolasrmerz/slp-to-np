@@ -6,6 +6,7 @@ project(slp-parse-cpp)
 add_executable(${PROJECT_NAME}
 src/main.cpp
 src/reader.cpp
+src/slp.cpp
 src/numpy/numpy_writer.cpp
 src/events/game_start.cpp
 src/events/payloads.cpp

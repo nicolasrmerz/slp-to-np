@@ -6,6 +6,7 @@
 #include <memory>
 #include "events/game_start.h"
 #include "events/payloads.h"
+#include "slp.h"
 
 namespace SLPToNP {
   class ReaderException : public std::exception {
@@ -22,13 +23,10 @@ namespace SLPToNP {
       ~Reader();
       void read();
     private:
-      std::ifstream fin;
       uint32_t slpLen;
-      std::unique_ptr<SLPToNP::Payloads> payloads;
-      std::unique_ptr<SLPToNP::GameStart> gameStart;
+      std::ifstream fin;
       void _read_ubjson_header();
-      void _verifyAndSetPayloadSizes();
-      void _readLoop();
+      void _readLoop(std::shared_ptr<SLPToNP::SLP> slp);
   };
 }
 #endif
