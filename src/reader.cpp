@@ -74,6 +74,7 @@ void SLPToNP::Reader::read() {
   _read_ubjson_header();
 
   slp->readPayload(fin);
+  slp->setFrameAllocationEstimate(slpLen);
 
   _readLoop(slp);
 }

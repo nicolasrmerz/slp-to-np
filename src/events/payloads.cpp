@@ -19,6 +19,9 @@ void SLPToNP::Payloads::_readSizeMap(std::ifstream &fin, uint16_t payloadSize) {
 }
 
 uint16_t SLPToNP::Payloads::getPayloadSize(SLPToNP::PayloadByte payloadByte) {
+  if (sizeMap.find(payloadByte) == sizeMap.end())
+    return 0;
+
   return sizeMap[payloadByte];
 }
 
@@ -35,6 +38,8 @@ void SLPToNP::Payloads::read(std::ifstream &fin) {
     throw SLPToNP::ReaderException("Did not find expected payload byte (0x35) at start of payloads payload.");
 
   fin.read(reinterpret_cast<char*>(&remainingPayloadSize), sizeof(uint8_t));
+
+  sizeMap[static_cast<SLPToNP::PayloadByte>(payloadByte)] = remainingPayloadSize;
 
   // The payload size includes the one byte that we just read - read the reamining n-1 bytes
   _readSizeMap(fin, remainingPayloadSize - 1);

@@ -23,6 +23,8 @@ namespace SLPToNP {
       void readPayload(std::ifstream &fin);
       void readGameStart(std::ifstream &fin);
       uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
+      uint32_t estimateFrameAllocation(uint32_t binarySize);
+      void setFrameAllocationEstimate(uint32_t binarySize);
     private:
       std::unique_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;

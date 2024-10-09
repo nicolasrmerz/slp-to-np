@@ -1,5 +1,8 @@
 #include <cstdint>
 #include "slp.h"
+#include "events/payloads.h"
+#include <iostream>
+#include <vector>
 
 SLPToNP::SLPException::SLPException(const char * msg) : message(msg) {}
 
@@ -30,6 +33,29 @@ void SLPToNP::SLP::_verifyAndSetPayloadSizes() {
     std::string errMessage("Size specified in binary for payload(s) " + errString + " was/were larger than internal struct(s).");
     throw SLPToNP::SLPException(errMessage.c_str());
   }
+}
+
+uint32_t SLPToNP::SLP::estimateFrameAllocation(uint32_t binarySize) {
+  uint32_t singleFrameSize{0};
+  uint32_t repeatFrameSize{0};
+  std::vector<SLPToNP::PayloadByte> singleFrames = {SLPToNP::PAYLOADS, SLPToNP::GAMESTART, SLPToNP::GAMEEND};
+  std::vector<SLPToNP::PayloadByte> repeatFrames = {SLPToNP::PREFRAME, SLPToNP::POSTFRAME, SLPToNP::FRAMESTART, SLPToNP::ITEMUPDATE, SLPToNP::FRAMEBOOKEND};
+
+  for (auto & singleFrameByte : singleFrames) {
+    singleFrameSize += payloads->getPayloadSize(singleFrameByte);
+  }
+
+  for (auto & repeatFrameByte : repeatFrames) {
+    repeatFrameSize += payloads->getPayloadSize(repeatFrameByte);
+  }
+
+  return (binarySize - singleFrameSize) / repeatFrameSize;
+}
+
+void SLPToNP::SLP::setFrameAllocationEstimate(uint32_t binarySize) {
+  uint32_t frameEstimate = estimateFrameAllocation(binarySize);
+
+  std::cout << frameEstimate << "\n";
 }
 
 uint16_t SLPToNP::SLP::getPayloadSize(SLPToNP::PayloadByte payloadByte) {
