@@ -54,10 +54,12 @@ void SLPToNP::Reader::_readLoop(std::shared_ptr<SLPToNP::SLP> slp) {
     // TODO: These are placeholders while they are not implemented
     case SLPToNP::PREFRAME:
     case SLPToNP::POSTFRAME:
-    case SLPToNP::GAMEEND:
     case SLPToNP::FRAMESTART:
     case SLPToNP::ITEMUPDATE:
     case SLPToNP::FRAMEBOOKEND:
+      slp->readFrameData(fin);
+      break;
+    case SLPToNP::GAMEEND:
     case SLPToNP::GECKOLIST:
     case SLPToNP::MESSAGESPLITTER:
       // fin.ignore(payloads->getPayloadSize(payloadByte)+1);

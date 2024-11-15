@@ -11,12 +11,14 @@ src/numpy/numpy_writer.cpp
 src/events/game_start.cpp
 src/events/payloads.cpp
 src/events/common.cpp
+src/events/frames/frames.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 headers
 headers/numpy
 headers/events
+headers/events/frames
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)

@@ -55,7 +55,7 @@ uint32_t SLPToNP::SLP::estimateFrameAllocation(uint32_t binarySize) {
 void SLPToNP::SLP::setFrameAllocationEstimate(uint32_t binarySize) {
   uint32_t frameEstimate = estimateFrameAllocation(binarySize);
 
-  std::cout << frameEstimate << "\n";
+  frames->allocateVectors(frameEstimate);
 }
 
 uint16_t SLPToNP::SLP::getPayloadSize(SLPToNP::PayloadByte payloadByte) {
@@ -71,4 +71,8 @@ void SLPToNP::SLP::readPayload(std::ifstream &fin) {
 
   _verifyAndSetPayloadSizes();
 
+}
+
+void SLPToNP::SLP::readFrameData(std::ifstream &fin) {
+  frames->read(fin);
 }
