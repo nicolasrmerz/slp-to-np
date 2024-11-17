@@ -13,6 +13,7 @@ const char * SLPToNP::SLPException::what() const throw () {
 SLPToNP::SLP::SLP() {
   payloads = std::make_unique<SLPToNP::Payloads>();
   gameStart = std::make_unique<SLPToNP::GameStart>();
+  frames = std::make_unique<SLPToNP::FrameWrapper>();
 }
 
 SLPToNP::SLP::~SLP() {
