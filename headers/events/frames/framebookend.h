@@ -3,8 +3,17 @@
 #include "events/common.h"
 
 namespace SLPToNP {
+  struct __attribute__((__packed__)) FrameBookendStruct {
+    uint8_t command_byte{0x3C};
+    int32_t frame_number{};
+    int32_t latest_finalized_frame{};
+  };
+
   class FrameBookend : public SLPToNP::Event {
-    void read(std::ifstream &fin) {};
+    public:
+      void read(std::ifstream &fin) {};
+    private:
+      FrameBookendStruct frameBookendStruct{};
   };
 }
 
