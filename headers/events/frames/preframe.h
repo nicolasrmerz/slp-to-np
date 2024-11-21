@@ -29,6 +29,7 @@ namespace SLPToNP {
 
   class PreFrame : public SLPToNP::Event {
     public:
+      PreFrame(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
     private:
       PreFrameStruct preFrameStruct{};

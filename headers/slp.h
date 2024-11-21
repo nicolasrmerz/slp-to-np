@@ -28,7 +28,7 @@ namespace SLPToNP {
       uint32_t estimateFrameAllocation(uint32_t binarySize);
       void setFrameAllocationEstimate(uint32_t binarySize);
     private:
-      std::unique_ptr<SLPToNP::Payloads> payloads;
+      std::shared_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;
       std::unique_ptr<SLPToNP::FrameWrapper> frames;
       void _verifyAndSetPayloadSizes();

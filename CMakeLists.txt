@@ -12,6 +12,7 @@ src/events/game_start.cpp
 src/events/payloads.cpp
 src/events/common.cpp
 src/events/frames/frames.cpp
+src/events/frames/preframe.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
