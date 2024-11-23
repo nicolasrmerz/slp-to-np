@@ -12,6 +12,14 @@
 #include <vector>
 #include <memory>
 namespace SLPToNP {
+  class FrameWrapperException : public std::exception {
+    public:
+      FrameWrapperException(const char * msg);
+      const char * what() const throw ();
+    private:
+      std::string message;
+  };
+
   class FrameWrapper {
     public:
       FrameWrapper(std::shared_ptr<SLPToNP::Payloads> payloads);
@@ -21,8 +29,10 @@ namespace SLPToNP {
       void allocateVectors(uint32_t allocateSize);
 
     private:
-      std::vector<std::shared_ptr<SLPToNP::PreFrame>> preFrames;
-      std::vector<std::shared_ptr<SLPToNP::PostFrame>> postFrames;
+      // 1 vector per potential player
+      std::vector<std::shared_ptr<SLPToNP::PreFrame>> preFrames[4];
+      std::vector<std::shared_ptr<SLPToNP::PostFrame>> postFrames[4];
+
       std::vector<std::shared_ptr<SLPToNP::FrameStart>> frameStarts;
       std::vector<std::shared_ptr<SLPToNP::ItemUpdate>> itemUpdates;
       std::vector<std::shared_ptr<SLPToNP::FrameBookend>> frameBookends;
