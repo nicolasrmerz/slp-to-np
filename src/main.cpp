@@ -10,7 +10,8 @@ int main()
   //
   // npWriter.writeHeader("test.npy", SLPToNP::U8);
 
-  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline_2.slp");
+  //SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline_2.slp");
+  SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/netplay.slp");
   try {
     reader.read();
   } catch (const SLPToNP::ReaderException &e) {

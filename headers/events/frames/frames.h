@@ -44,7 +44,14 @@ namespace SLPToNP {
 
 template <typename T>
 void SLPToNP::FrameWrapper::_addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector) {
-  eventVector.push_back(event);
+  // Frames start at -123
+  auto zeroIdxFrameNumber{static_cast<typename std::vector<std::shared_ptr<T>>::size_type>(event->getFrameNumber() + 123)};
+  if (zeroIdxFrameNumber < eventVector.size()) {
+    eventVector[zeroIdxFrameNumber] = event;
+  } else {
+    eventVector.push_back(event);
+  }
+
 }
 
 #endif
