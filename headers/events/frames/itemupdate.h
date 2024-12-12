@@ -26,6 +26,7 @@ namespace SLPToNP {
 
   class ItemUpdate : public SLPToNP::Event {
     public:
+      ItemUpdate(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
     private:
       ItemUpdateStruct itemUpdateStruct{};

@@ -11,6 +11,7 @@ namespace SLPToNP {
 
   class FrameBookend : public SLPToNP::Event {
     public:
+      FrameBookend(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
     private:
       FrameBookendStruct frameBookendStruct{};

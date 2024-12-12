@@ -14,6 +14,9 @@ src/events/common.cpp
 src/events/frames/frames.cpp
 src/events/frames/preframe.cpp
 src/events/frames/postframe.cpp
+src/events/frames/framestart.cpp
+src/events/frames/itemupdate.cpp
+src/events/frames/framebookend.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

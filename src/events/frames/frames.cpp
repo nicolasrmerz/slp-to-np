@@ -66,11 +66,23 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
     break;
 
     case SLPToNP::FRAMESTART:
+    {
+      std::shared_ptr<SLPToNP::FrameStart> frameStart = std::make_shared<SLPToNP::FrameStart>(fin, payloadSize);
+      _addFrame(frameStart, frameStarts);
+    }
+    break;
     case SLPToNP::ITEMUPDATE:
+    {
+      std::shared_ptr<SLPToNP::ItemUpdate> itemUpdate = std::make_shared<SLPToNP::ItemUpdate>(fin, payloadSize);
+      _addFrame(itemUpdate, itemUpdates);
+    }
+    break;
     case SLPToNP::FRAMEBOOKEND:
-      // slp->readFrameData(fin);
-      fin.ignore(payloadSize);
-      break;
+    {
+      std::shared_ptr<SLPToNP::FrameBookend> frameBookend = std::make_shared<SLPToNP::FrameBookend>(fin, payloadSize);
+      _addFrame(frameBookend, frameBookends);
+    }
+    break;
     default:
       return;
   }
