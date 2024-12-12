@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <string>
 namespace SLPToNP {
   class FrameWrapperException : public std::exception {
     public:
@@ -37,11 +38,11 @@ namespace SLPToNP {
       std::vector<std::shared_ptr<SLPToNP::ItemUpdate>> itemUpdates;
       std::vector<std::shared_ptr<SLPToNP::FrameBookend>> frameBookends;
       std::shared_ptr<SLPToNP::Payloads> payloads;
+      void _checkPlayerIndex(const char * frameType, int32_t frameNumber, uint8_t playerIndex);
       template <typename T>
       void _addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector);
   };
 }
-
 template <typename T>
 void SLPToNP::FrameWrapper::_addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector) {
   // Frames start at -123

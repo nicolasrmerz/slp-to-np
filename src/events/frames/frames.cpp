@@ -23,6 +23,23 @@ void SLPToNP::FrameWrapper::allocateVectors(uint32_t allocateSize) {
       
 }
 
+void SLPToNP::FrameWrapper::_checkPlayerIndex(const char * frameType, int32_t frameNumber, uint8_t playerIndex) {
+  if (playerIndex >= 4) {
+    std::string errMessage{};
+    errMessage += frameType;
+    errMessage += " player_index must be between 0 and 3 (inclusive). " ;
+    errMessage += frameType;
+    errMessage += " ";
+    errMessage += std::to_string(frameNumber);
+    errMessage += " had player_index of ";
+    errMessage += std::to_string(playerIndex);
+    errMessage += ".\n";
+
+    throw SLPToNP::FrameWrapperException(errMessage.c_str());
+
+  }
+}
+
 void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
   SLPToNP::PayloadByte payloadByte{};
   uint16_t payloadSize;
@@ -33,16 +50,8 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
     case SLPToNP::PREFRAME: {
       std::shared_ptr<SLPToNP::PreFrame> preFrame = std::make_shared<SLPToNP::PreFrame>(fin, payloadSize);
       uint8_t playerIndex{preFrame->getPlayerIndex()};
-      if (playerIndex >= 4) {
-        std::string errMessage = "PreFrame player_index must be between 0 and 3 (inclusive). PreFrame ";
-        errMessage += std::to_string(preFrame->getFrameNumber());
-        errMessage += " had player_index of ";
-        errMessage += std::to_string(playerIndex);
-        errMessage += ".\n";
-
-        throw SLPToNP::FrameWrapperException(errMessage.c_str());
-
-      }
+      int32_t frameNumber{preFrame->getFrameNumber()};
+      _checkPlayerIndex("PreFrame", frameNumber, playerIndex);
       _addFrame(preFrame, preFrames[playerIndex]);
     }
     break;
@@ -51,16 +60,8 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
     {
       std::shared_ptr<SLPToNP::PostFrame> postFrame = std::make_shared<SLPToNP::PostFrame>(fin, payloadSize);
       uint8_t playerIndex{postFrame->getPlayerIndex()};
-      if (playerIndex >= 4) {
-        std::string errMessage = "PostFrame player_index must be between 0 and 3 (inclusive). PostFrame ";
-        errMessage += std::to_string(postFrame->getFrameNumber());
-        errMessage += " had player_index of ";
-        errMessage += std::to_string(playerIndex);
-        errMessage += ".\n";
-
-        throw SLPToNP::FrameWrapperException(errMessage.c_str());
-
-      }
+      int32_t frameNumber{postFrame->getFrameNumber()};
+      _checkPlayerIndex("PostFrame", frameNumber, playerIndex);
       _addFrame(postFrame, postFrames[playerIndex]);
     }
     break;
