@@ -13,6 +13,7 @@ src/events/payloads.cpp
 src/events/common.cpp
 src/events/frames/frames.cpp
 src/events/frames/preframe.cpp
+src/events/frames/postframe.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

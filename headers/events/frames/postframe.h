@@ -44,9 +44,12 @@ namespace SLPToNP {
 
   class PostFrame : public SLPToNP::Event {
     public:
+      PostFrame(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
+      uint8_t getPlayerIndex();
     private:
       PostFrameStruct postFrameStruct{};
+      uint8_t playerIndex{0};
   };
 }
 

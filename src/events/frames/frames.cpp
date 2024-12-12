@@ -48,6 +48,23 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
     break;
 
     case SLPToNP::POSTFRAME:
+    {
+      std::shared_ptr<SLPToNP::PostFrame> postFrame = std::make_shared<SLPToNP::PostFrame>(fin, payloadSize);
+      uint8_t playerIndex{postFrame->getPlayerIndex()};
+      if (playerIndex >= 4) {
+        std::string errMessage = "PostFrame player_index must be between 0 and 3 (inclusive). PostFrame ";
+        errMessage += std::to_string(postFrame->getFrameNumber());
+        errMessage += " had player_index of ";
+        errMessage += std::to_string(playerIndex);
+        errMessage += ".\n";
+
+        throw SLPToNP::FrameWrapperException(errMessage.c_str());
+
+      }
+      _addFrame(postFrame, postFrames[playerIndex]);
+    }
+    break;
+
     case SLPToNP::FRAMESTART:
     case SLPToNP::ITEMUPDATE:
     case SLPToNP::FRAMEBOOKEND:
