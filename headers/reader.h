@@ -20,13 +20,14 @@ namespace SLPToNP {
   class Reader {
     public:
       Reader(const char* filename);
-      ~Reader();
-      void read();
+      std::unique_ptr<SLPToNP::SLP> read();
     private:
+      std::unique_ptr<SLPToNP::SLP> slp;
       uint32_t slpLen;
       std::ifstream fin;
       void _read_ubjson_header();
-      void _readLoop(std::shared_ptr<SLPToNP::SLP> slp);
+      //void _readLoop(std::unique_ptr<SLPToNP::SLP> slp);
+      void _readLoop();
   };
 }
 #endif

@@ -20,12 +20,6 @@ SLPToNP::Reader::Reader(const char* filename) {
     throw SLPToNP::ReaderException("Filename does not exist.");
   }
   fin.open(filename);
-  // payloads = std::make_unique<SLPToNP::Payloads>();
-  // gameStart = std::make_unique<SLPToNP::GameStart>();
-}
-
-SLPToNP::Reader::~Reader() {
-  fin.close();
 }
 
 void SLPToNP::Reader::_read_ubjson_header() {
@@ -40,7 +34,7 @@ void SLPToNP::Reader::_read_ubjson_header() {
 }
 
 
-void SLPToNP::Reader::_readLoop(std::shared_ptr<SLPToNP::SLP> slp) {
+void SLPToNP::Reader::_readLoop() {
   SLPToNP::PayloadByte payloadByte{};
   while(true) {
     payloadByte = static_cast<SLPToNP::PayloadByte>(fin.peek());
@@ -71,12 +65,14 @@ void SLPToNP::Reader::_readLoop(std::shared_ptr<SLPToNP::SLP> slp) {
   }
 }
 
-void SLPToNP::Reader::read() {
-  std::shared_ptr<SLPToNP::SLP> slp = std::make_shared<SLPToNP::SLP>();
+std::unique_ptr<SLPToNP::SLP> SLPToNP::Reader::read() {
+  slp = std::make_unique<SLPToNP::SLP>();
   _read_ubjson_header();
 
   slp->readPayload(fin);
   slp->setFrameAllocationEstimate(slpLen);
 
-  _readLoop(slp);
+  _readLoop();
+
+  return std::move(slp);
 }

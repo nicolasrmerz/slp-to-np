@@ -13,7 +13,7 @@ int main()
   //SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/offline_2.slp");
   SLPToNP::Reader reader("/home/nicolasmerz/Documents/slp-to-np/samples/netplay.slp");
   try {
-    reader.read();
+    std::unique_ptr<SLPToNP::SLP> slp = reader.read();
   } catch (const SLPToNP::ReaderException &e) {
     std::cerr << e.what() << "\n";
   }
