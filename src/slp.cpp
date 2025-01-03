@@ -1,7 +1,6 @@
 #include <cstdint>
 #include "slp.h"
 #include "events/payloads.h"
-#include <iostream>
 #include <vector>
 
 SLPToNP::SLPException::SLPException(const char * msg) : message(msg) {}
@@ -11,9 +10,9 @@ const char * SLPToNP::SLPException::what() const throw () {
 }
 
 SLPToNP::SLP::SLP() {
-  payloads = std::make_shared<SLPToNP::Payloads>();
   gameStart = std::make_unique<SLPToNP::GameStart>();
-  frames = std::make_unique<SLPToNP::FrameWrapper>(payloads);
+  payloads = std::make_unique<SLPToNP::Payloads>();
+  frames = std::make_unique<SLPToNP::FrameWrapper>();
 }
 
 SLPToNP::SLP::~SLP() {
@@ -75,5 +74,5 @@ void SLPToNP::SLP::readPayload(std::ifstream &fin) {
 }
 
 void SLPToNP::SLP::readFrameData(std::ifstream &fin) {
-  frames->read(fin);
+  frames->read(fin, payloads);
 }

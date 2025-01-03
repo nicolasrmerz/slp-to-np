@@ -23,10 +23,7 @@ namespace SLPToNP {
 
   class FrameWrapper {
     public:
-      FrameWrapper(std::shared_ptr<SLPToNP::Payloads> payloads);
-      // FrameWrapper(const std::shared_ptr<SLPToNP::Payloads> & payloads);
-      //~FrameWrapper();
-      void read(std::ifstream &fin);
+      void read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads);
       void allocateVectors(uint32_t allocateSize);
 
     private:
@@ -37,7 +34,6 @@ namespace SLPToNP {
       std::vector<std::shared_ptr<SLPToNP::FrameStart>> frameStarts;
       std::vector<std::shared_ptr<SLPToNP::ItemUpdate>> itemUpdates;
       std::vector<std::shared_ptr<SLPToNP::FrameBookend>> frameBookends;
-      std::shared_ptr<SLPToNP::Payloads> payloads;
       void _checkPlayerIndex(const char * frameType, int32_t frameNumber, uint8_t playerIndex);
       template <typename T>
       void _addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector);

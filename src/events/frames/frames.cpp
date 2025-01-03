@@ -8,10 +8,6 @@ const char * SLPToNP::FrameWrapperException::what() const throw () {
   return message.c_str();
 }
 
-SLPToNP::FrameWrapper::FrameWrapper(std::shared_ptr<SLPToNP::Payloads> payloads) {
-  this->payloads = payloads;
-}
-
 void SLPToNP::FrameWrapper::allocateVectors(uint32_t allocateSize) {
   for(int i = 0; i < 4; i++) {
     preFrames[i].reserve(allocateSize);
@@ -40,7 +36,7 @@ void SLPToNP::FrameWrapper::_checkPlayerIndex(const char * frameType, int32_t fr
   }
 }
 
-void SLPToNP::FrameWrapper::read(std::ifstream &fin) {
+void SLPToNP::FrameWrapper::read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads) {
   SLPToNP::PayloadByte payloadByte{};
   uint16_t payloadSize;
   payloadByte = static_cast<SLPToNP::PayloadByte>(fin.peek());
