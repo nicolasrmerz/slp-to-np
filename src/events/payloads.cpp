@@ -1,11 +1,11 @@
 #include <fstream>
 #include "events/payloads.h"
 #include "utils/endian.h"
-#include "reader.h"
+#include "readers/bin_reader.h"
 
 void SLPToNP::Payloads::_readSizeMap(std::ifstream &fin, uint16_t payloadSize) {
   if((payloadSize % 3) != 0)
-    throw SLPToNP::ReaderException("Read payload size is not divisible by 3.");
+    throw SLPToNP::BinReaderException("Read payload size is not divisible by 3.");
 
   for(unsigned int i{0}; i < payloadSize/3; i++) {
     uint8_t payload_byte{};
@@ -35,7 +35,7 @@ void SLPToNP::Payloads::read(std::ifstream &fin) {
 
   fin.read(reinterpret_cast<char*>(&payloadByte), sizeof(uint8_t));
   if(payloadByte != SLPToNP::PAYLOADS)
-    throw SLPToNP::ReaderException("Did not find expected payload byte (0x35) at start of payloads payload.");
+    throw SLPToNP::BinReaderException("Did not find expected payload byte (0x35) at start of payloads payload.");
 
   fin.read(reinterpret_cast<char*>(&remainingPayloadSize), sizeof(uint8_t));
 

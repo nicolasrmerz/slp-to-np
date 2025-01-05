@@ -9,17 +9,17 @@
 #include "slp.h"
 
 namespace SLPToNP {
-  class ReaderException : public std::exception {
+  class BinReaderException : public std::exception {
     public:
-      ReaderException(const char * msg);
+      BinReaderException(const char * msg);
       const char * what() const throw ();
     private:
       std::string message;
   };
 
-  class Reader {
+  class BinReader {
     public:
-      Reader(const char* filename);
+      BinReader(const char* filename);
       std::unique_ptr<SLPToNP::SLP> read();
     private:
       std::unique_ptr<SLPToNP::SLP> slp;
