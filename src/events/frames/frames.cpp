@@ -8,6 +8,44 @@ const char * SLPToNP::FrameWrapperException::what() const throw () {
   return message.c_str();
 }
 
+SLPToNP::FrameWrapper::FrameWrapper() {
+  frameNumberStartExists = false;
+  frameNumberEndExists = false;
+  startFrame = -124;
+  endFrame = -124;
+}
+
+void SLPToNP::FrameWrapper::_checkFrameStartEnd(int32_t start_frame, int32_t end_frame) {
+
+  if (start_frame >= -123 && end_frame >= -123) {
+    if (end_frame <= start_frame) {
+      std::string errMessage{};
+      errMessage += "Starting frame number must be before ending frame number. Starting number was " ;
+      errMessage += std::to_string(start_frame);
+      errMessage += ", ending number was ";
+      errMessage += std::to_string(end_frame);
+      errMessage += ".\n";
+
+      throw SLPToNP::FrameWrapperException(errMessage.c_str());
+
+    }
+  }
+}
+
+SLPToNP::FrameWrapper::FrameWrapper(int32_t start_frame, int32_t end_frame) {
+  _checkFrameStartEnd(start_frame, end_frame);
+
+  startFrame = start_frame;
+  endFrame = end_frame;
+  if (startFrame >= -123) {
+    frameNumberStartExists = true;
+  }
+
+  if (endFrame >= -123) {
+    frameNumberEndExists = true;
+  }
+}
+
 void SLPToNP::FrameWrapper::allocateVectors(uint32_t allocateSize) {
   for(int i = 0; i < 4; i++) {
     preFrames[i].reserve(allocateSize);
@@ -36,7 +74,15 @@ void SLPToNP::FrameWrapper::_checkPlayerIndex(const char * frameType, int32_t fr
   }
 }
 
-void SLPToNP::FrameWrapper::read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads) {
+int32_t SLPToNP::FrameWrapper::getFrameSubsetLength() {
+  if (!frameNumberStartExists || !frameNumberEndExists) {
+    return -1;
+  }
+
+  return endFrame - startFrame;
+}
+
+bool SLPToNP::FrameWrapper::read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads) {
   SLPToNP::PayloadByte payloadByte{};
   uint16_t payloadSize;
   payloadByte = static_cast<SLPToNP::PayloadByte>(fin.peek());
@@ -48,9 +94,8 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin, const std::unique_ptr<SLPTo
       uint8_t playerIndex{preFrame->getPlayerIndex()};
       int32_t frameNumber{preFrame->getFrameNumber()};
       _checkPlayerIndex("PreFrame", frameNumber, playerIndex);
-      _addFrame(preFrame, preFrames[playerIndex]);
+      return _addFrame(preFrame, preFrames[playerIndex], frameNumber);
     }
-    break;
 
     case SLPToNP::POSTFRAME:
     {
@@ -58,30 +103,32 @@ void SLPToNP::FrameWrapper::read(std::ifstream &fin, const std::unique_ptr<SLPTo
       uint8_t playerIndex{postFrame->getPlayerIndex()};
       int32_t frameNumber{postFrame->getFrameNumber()};
       _checkPlayerIndex("PostFrame", frameNumber, playerIndex);
-      _addFrame(postFrame, postFrames[playerIndex]);
+      return _addFrame(postFrame, postFrames[playerIndex], frameNumber);
     }
-    break;
 
     case SLPToNP::FRAMESTART:
     {
       std::shared_ptr<SLPToNP::FrameStart> frameStart = std::make_shared<SLPToNP::FrameStart>(fin, payloadSize);
-      _addFrame(frameStart, frameStarts);
+      int32_t frameNumber{frameStart->getFrameNumber()};
+      return _addFrame(frameStart, frameStarts, frameNumber);
     }
-    break;
+
     case SLPToNP::ITEMUPDATE:
     {
       std::shared_ptr<SLPToNP::ItemUpdate> itemUpdate = std::make_shared<SLPToNP::ItemUpdate>(fin, payloadSize);
-      _addFrame(itemUpdate, itemUpdates);
+      int32_t frameNumber{itemUpdate->getFrameNumber()};
+      return _addFrame(itemUpdate, itemUpdates, frameNumber);
     }
-    break;
+
     case SLPToNP::FRAMEBOOKEND:
     {
       std::shared_ptr<SLPToNP::FrameBookend> frameBookend = std::make_shared<SLPToNP::FrameBookend>(fin, payloadSize);
-      _addFrame(frameBookend, frameBookends);
+      int32_t frameNumber{frameBookend->getFrameNumber()};
+      return _addFrame(frameBookend, frameBookends, frameNumber);
     }
-    break;
+
     default:
-      return;
+      return false;
   }
 
 }

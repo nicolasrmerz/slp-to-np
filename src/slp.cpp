@@ -15,6 +15,16 @@ SLPToNP::SLP::SLP() {
   frames = std::make_unique<SLPToNP::FrameWrapper>();
 }
 
+SLPToNP::SLP::SLP(int32_t startFrame, int32_t endFrame) {
+  gameStart = std::make_unique<SLPToNP::GameStart>();
+  payloads = std::make_unique<SLPToNP::Payloads>();
+  if (startFrame <= -124 && endFrame <= -124) {
+    frames = std::make_unique<SLPToNP::FrameWrapper>();
+  } else {
+    frames = std::make_unique<SLPToNP::FrameWrapper>(startFrame, endFrame);
+  }
+}
+
 SLPToNP::SLP::~SLP() {
 }
 
@@ -53,7 +63,13 @@ uint32_t SLPToNP::SLP::estimateFrameAllocation(uint32_t binarySize) {
 }
 
 void SLPToNP::SLP::setFrameAllocationEstimate(uint32_t binarySize) {
-  uint32_t frameEstimate = estimateFrameAllocation(binarySize);
+  uint32_t frameEstimate{};
+  // If frames has been initialized with a start and end frame, we only need a vector of that length
+  if (frames->getFrameSubsetLength() > -1) {
+    frameEstimate = static_cast<uint32_t>(frames->getFrameSubsetLength());
+  } else {
+    frameEstimate = estimateFrameAllocation(binarySize);
+  }
 
   frames->allocateVectors(frameEstimate);
 }
@@ -73,6 +89,6 @@ void SLPToNP::SLP::readPayload(std::ifstream &fin) {
 
 }
 
-void SLPToNP::SLP::readFrameData(std::ifstream &fin) {
-  frames->read(fin, payloads);
+bool SLPToNP::SLP::readFrameData(std::ifstream &fin) {
+  return frames->read(fin, payloads);
 }

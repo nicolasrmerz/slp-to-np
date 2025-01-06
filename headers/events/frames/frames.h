@@ -23,8 +23,11 @@ namespace SLPToNP {
 
   class FrameWrapper {
     public:
-      void read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads);
+      FrameWrapper();
+      FrameWrapper(int32_t startFrame, int32_t endFrame);
+      bool read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads);
       void allocateVectors(uint32_t allocateSize);
+      int32_t getFrameSubsetLength();
 
     private:
       // 1 vector per potential player
@@ -34,20 +37,39 @@ namespace SLPToNP {
       std::vector<std::shared_ptr<SLPToNP::FrameStart>> frameStarts;
       std::vector<std::shared_ptr<SLPToNP::ItemUpdate>> itemUpdates;
       std::vector<std::shared_ptr<SLPToNP::FrameBookend>> frameBookends;
+      void _checkFrameStartEnd(int32_t start_frame, int32_t end_frame);
       void _checkPlayerIndex(const char * frameType, int32_t frameNumber, uint8_t playerIndex);
+      int32_t startFrame;
+      int32_t endFrame;
+      bool frameNumberStartExists{};
+      bool frameNumberEndExists{};
       template <typename T>
-      void _addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector);
+      bool _addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector, int32_t frameNumber);
   };
 }
 template <typename T>
-void SLPToNP::FrameWrapper::_addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector) {
+bool SLPToNP::FrameWrapper::_addFrame(std::shared_ptr<T> event, std::vector<std::shared_ptr<T>> & eventVector, int32_t frameNumber) {
+  if (frameNumberStartExists && frameNumber < startFrame) {
+    return true;
+  }
+
+  // Max rollback is 7 frames - conservatively, if we're over 8 frames,
+  // we've finalized the range we're interested in
+  if (frameNumberEndExists && frameNumber >= endFrame + 8) {
+    return false;
+  }
+
   // Frames start at -123
-  auto zeroIdxFrameNumber{static_cast<typename std::vector<std::shared_ptr<T>>::size_type>(event->getFrameNumber() + 123)};
+  auto zeroIdxFrameNumber{static_cast<typename std::vector<std::shared_ptr<T>>::size_type>(frameNumber + 123)};
+  // If we're skipping frames, ensure we start at idx 0
+  zeroIdxFrameNumber -= (startFrame * frameNumberStartExists);
   if (zeroIdxFrameNumber < eventVector.size()) {
     eventVector[zeroIdxFrameNumber] = event;
   } else {
     eventVector.push_back(event);
   }
+
+  return true;
 
 }
 

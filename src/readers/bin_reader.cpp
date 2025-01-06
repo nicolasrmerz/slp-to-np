@@ -51,7 +51,9 @@ void SLPToNP::BinReader::_readLoop() {
     case SLPToNP::FRAMESTART:
     case SLPToNP::ITEMUPDATE:
     case SLPToNP::FRAMEBOOKEND:
-      slp->readFrameData(fin);
+      if(!(slp->readFrameData(fin))) {
+        return;
+      }
       break;
     case SLPToNP::GAMEEND:
     case SLPToNP::GECKOLIST:
@@ -65,8 +67,8 @@ void SLPToNP::BinReader::_readLoop() {
   }
 }
 
-std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
-  slp = std::make_unique<SLPToNP::SLP>();
+std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read(int32_t startFrame, int32_t endFrame) {
+  slp = std::make_unique<SLPToNP::SLP>(startFrame, endFrame);
   _read_ubjson_header();
 
   slp->readPayload(fin);
@@ -75,4 +77,8 @@ std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
   _readLoop();
 
   return std::move(slp);
+}
+
+std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
+  return read(-124, -124);
 }

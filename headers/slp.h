@@ -20,10 +20,11 @@ namespace SLPToNP {
   class SLP {
     public:
       SLP();
+      SLP(int32_t startFrame, int32_t endFrame);
       ~SLP();
       void readPayload(std::ifstream &fin);
       void readGameStart(std::ifstream &fin);
-      void readFrameData(std::ifstream &fin);
+      bool readFrameData(std::ifstream &fin);
       uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
       uint32_t estimateFrameAllocation(uint32_t binarySize);
       void setFrameAllocationEstimate(uint32_t binarySize);
