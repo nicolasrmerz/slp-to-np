@@ -18,7 +18,7 @@ SLPToNP::SLP::SLP() {
 SLPToNP::SLP::SLP(int32_t startFrame, int32_t endFrame) {
   gameStart = std::make_unique<SLPToNP::GameStart>();
   payloads = std::make_unique<SLPToNP::Payloads>();
-  if (startFrame <= -124 && endFrame <= -124) {
+  if (startFrame < minFrame && endFrame < minFrame) {
     frames = std::make_unique<SLPToNP::FrameWrapper>();
   } else {
     frames = std::make_unique<SLPToNP::FrameWrapper>(startFrame, endFrame);

@@ -7,6 +7,7 @@
 #include "events/frames/framestart.h"
 #include "events/frames/itemupdate.h"
 #include "events/frames/framebookend.h"
+#include "constants.h"
 #include <cstdint>
 #include <fstream>
 #include <vector>
@@ -54,13 +55,19 @@ bool SLPToNP::FrameWrapper::_addFrame(std::shared_ptr<T> event, std::vector<std:
   }
 
   // Max rollback is 7 frames - conservatively, if we're over 8 frames,
-  // we've finalized the range we're interested in
-  if (frameNumberEndExists && frameNumber >= endFrame + 8) {
+  // we've finalized the frames in the range we're interested in
+  if (frameNumberEndExists && frameNumber >= endFrame + maxRollbackFrames + 1) {
     return false;
   }
 
+  // Don't add this frame, as we're over the range we're interested in, but keep iterating
+  // in case of rollback
+  if (frameNumberEndExists && frameNumber >= endFrame) {
+    return true;
+  }
+
   // Frames start at -123
-  auto zeroIdxFrameNumber{static_cast<typename std::vector<std::shared_ptr<T>>::size_type>(frameNumber + 123)};
+  auto zeroIdxFrameNumber{static_cast<typename std::vector<std::shared_ptr<T>>::size_type>(frameNumber - minFrame)};
   // If we're skipping frames, ensure we start at idx 0
   zeroIdxFrameNumber -= (startFrame * frameNumberStartExists);
   if (zeroIdxFrameNumber < eventVector.size()) {

@@ -11,13 +11,13 @@ const char * SLPToNP::FrameWrapperException::what() const throw () {
 SLPToNP::FrameWrapper::FrameWrapper() {
   frameNumberStartExists = false;
   frameNumberEndExists = false;
-  startFrame = -124;
-  endFrame = -124;
+  startFrame = minFrame - 1;
+  endFrame = minFrame - 1;
 }
 
 void SLPToNP::FrameWrapper::_checkFrameStartEnd(int32_t start_frame, int32_t end_frame) {
 
-  if (start_frame >= -123 && end_frame >= -123) {
+  if (start_frame >= minFrame && end_frame >= minFrame) {
     if (end_frame <= start_frame) {
       std::string errMessage{};
       errMessage += "Starting frame number must be before ending frame number. Starting number was " ;
@@ -37,11 +37,11 @@ SLPToNP::FrameWrapper::FrameWrapper(int32_t start_frame, int32_t end_frame) {
 
   startFrame = start_frame;
   endFrame = end_frame;
-  if (startFrame >= -123) {
+  if (startFrame >= minFrame) {
     frameNumberStartExists = true;
   }
 
-  if (endFrame >= -123) {
+  if (endFrame >= minFrame) {
     frameNumberEndExists = true;
   }
 }

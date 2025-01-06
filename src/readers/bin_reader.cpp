@@ -1,5 +1,6 @@
 #include "utils/endian.h"
 #include "events/game_start.h"
+#include "constants.h"
 #include "readers/bin_reader.h"
 #include "slp.h"
 #include <sys/stat.h>
@@ -80,5 +81,5 @@ std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read(int32_t startFrame, int32
 }
 
 std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
-  return read(-124, -124);
+  return read(minFrame - 1, minFrame - 1);
 }
