@@ -29,6 +29,10 @@ uint16_t SLPToNP::Payloads::getGameStartSize() {
   return sizeMap[SLPToNP::GAMESTART];
 }
 
+uint16_t SLPToNP::Payloads::getGameEndSize() {
+  return sizeMap[SLPToNP::GAMEEND];
+}
+
 void SLPToNP::Payloads::read(std::ifstream &fin) {
   uint8_t payloadByte{};
   uint16_t remainingPayloadSize{};

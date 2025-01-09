@@ -9,6 +9,7 @@ src/slp.cpp
 src/numpy/numpy_writer.cpp
 src/readers/bin_reader.cpp
 src/events/game_start.cpp
+src/events/game_end.cpp
 src/events/payloads.cpp
 src/events/common.cpp
 src/events/frames/frames.cpp

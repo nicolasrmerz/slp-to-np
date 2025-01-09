@@ -57,6 +57,8 @@ void SLPToNP::BinReader::_readLoop() {
       }
       break;
     case SLPToNP::GAMEEND:
+      slp->readGameEnd(fin);
+      break;
     case SLPToNP::GECKOLIST:
     case SLPToNP::MESSAGESPLITTER:
       // fin.ignore(payloads->getPayloadSize(payloadByte)+1);

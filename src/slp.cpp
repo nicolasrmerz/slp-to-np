@@ -11,12 +11,14 @@ const char * SLPToNP::SLPException::what() const throw () {
 
 SLPToNP::SLP::SLP() {
   gameStart = std::make_unique<SLPToNP::GameStart>();
+  gameEnd = std::make_unique<SLPToNP::GameEnd>();
   payloads = std::make_unique<SLPToNP::Payloads>();
   frames = std::make_unique<SLPToNP::FrameWrapper>();
 }
 
 SLPToNP::SLP::SLP(int32_t startFrame, int32_t endFrame) {
   gameStart = std::make_unique<SLPToNP::GameStart>();
+  gameEnd = std::make_unique<SLPToNP::GameEnd>();
   payloads = std::make_unique<SLPToNP::Payloads>();
   if (startFrame < minFrame && endFrame < minFrame) {
     frames = std::make_unique<SLPToNP::FrameWrapper>();
@@ -38,6 +40,13 @@ void SLPToNP::SLP::_verifyAndSetPayloadSizes() {
   }
   // To read the extra byte
   gameStart->setPayloadSize(payloadSize+1);
+
+  payloadSize = payloads->getGameEndSize();
+  if (payloadSize > sizeof(SLPToNP::GameEndStruct)) {
+    errString += "GameEnd, ";
+  }
+  // To read the extra byte
+  gameEnd->setPayloadSize(payloadSize+1);
 
   if (errString.size()) {
     std::string errMessage("Size specified in binary for payload(s) " + errString + " was/were larger than internal struct(s).");
@@ -80,6 +89,10 @@ uint16_t SLPToNP::SLP::getPayloadSize(SLPToNP::PayloadByte payloadByte) {
 
 void SLPToNP::SLP::readGameStart(std::ifstream &fin) {
   gameStart->read(fin);
+}
+
+void SLPToNP::SLP::readGameEnd(std::ifstream &fin) {
+  gameEnd->read(fin);
 }
 
 void SLPToNP::SLP::readPayload(std::ifstream &fin) {
