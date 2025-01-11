@@ -10,3 +10,15 @@ SLPToNP::PreFrame::PreFrame(std::ifstream &fin, uint16_t payloadSize) {
 uint8_t SLPToNP::PreFrame::getPlayerIndex() {
   return playerIndex;
 }
+
+std::size_t SLPToNP::PreFrame::getInternalStructSize() {
+  return sizeof(PreFrameStruct);
+}
+
+SLPToNP::PayloadByte SLPToNP::PreFrame::getPayloadByte() {
+  return static_cast<SLPToNP::PayloadByte>(preFrameStruct.command_byte);
+}
+
+std::string_view SLPToNP::PreFrame::getEventName() {
+  return "Pre Frame";
+}

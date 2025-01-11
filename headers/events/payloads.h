@@ -4,8 +4,6 @@
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
-#include "events/common.h"
-#include "events/game_start.h"
 namespace SLPToNP {
   enum PayloadByte {
     PAYLOADS = 0x35,
@@ -20,10 +18,9 @@ namespace SLPToNP {
     MESSAGESPLITTER = 0x10
   };
 
-  class Payloads : public SLPToNP::Event {
+  class Payloads {
     public:
       void read(std::ifstream &fin);
-      void setPayloadSize(uint16_t size){}
       uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
       uint16_t getGameStartSize();
       uint16_t getGameEndSize();

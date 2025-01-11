@@ -40,6 +40,9 @@ namespace SLPToNP {
   class GameStart : public SLPToNP::Event {
     public:
       void read(std::ifstream &fin);
+      std::size_t getInternalStructSize();
+      std::string_view getEventName();
+      SLPToNP::PayloadByte getPayloadByte();
 
     protected:
       GameStartStruct gameStartStruct{};

@@ -13,6 +13,9 @@ namespace SLPToNP {
     public:
       FrameBookend(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
+      std::size_t getInternalStructSize();
+      std::string_view getEventName();
+      SLPToNP::PayloadByte getPayloadByte();
     private:
       FrameBookendStruct frameBookendStruct{};
   };

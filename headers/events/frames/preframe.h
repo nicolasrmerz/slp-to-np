@@ -32,6 +32,9 @@ namespace SLPToNP {
       PreFrame(std::ifstream &fin, uint16_t payloadSize);
       void read(std::ifstream &fin) {};
       uint8_t getPlayerIndex();
+      std::size_t getInternalStructSize();
+      std::string_view getEventName();
+      SLPToNP::PayloadByte getPayloadByte();
     private:
       PreFrameStruct preFrameStruct{};
       uint8_t playerIndex{0};

@@ -31,27 +31,9 @@ SLPToNP::SLP::~SLP() {
 }
 
 void SLPToNP::SLP::_verifyAndSetPayloadSizes() {
-  std::string errString{};
-  uint16_t payloadSize{};
+  gameStart->setPayloadSize(payloads);
 
-  payloadSize = payloads->getGameStartSize();
-  if (payloadSize > sizeof(SLPToNP::GameStartStruct)) {
-    errString += "GameStart, ";
-  }
-  // To read the extra byte
-  gameStart->setPayloadSize(payloadSize+1);
-
-  payloadSize = payloads->getGameEndSize();
-  if (payloadSize > sizeof(SLPToNP::GameEndStruct)) {
-    errString += "GameEnd, ";
-  }
-  // To read the extra byte
-  gameEnd->setPayloadSize(payloadSize+1);
-
-  if (errString.size()) {
-    std::string errMessage("Size specified in binary for payload(s) " + errString + " was/were larger than internal struct(s).");
-    throw SLPToNP::SLPException(errMessage.c_str());
-  }
+  gameEnd->setPayloadSize(payloads);
 }
 
 uint32_t SLPToNP::SLP::estimateFrameAllocation(uint32_t binarySize) {

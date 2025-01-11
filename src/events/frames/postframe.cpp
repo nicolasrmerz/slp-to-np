@@ -10,3 +10,15 @@ SLPToNP::PostFrame::PostFrame(std::ifstream &fin, uint16_t payloadSize) {
 uint8_t SLPToNP::PostFrame::getPlayerIndex() {
   return playerIndex;
 }
+
+std::size_t SLPToNP::PostFrame::getInternalStructSize() {
+  return sizeof(PostFrameStruct);
+}
+
+SLPToNP::PayloadByte SLPToNP::PostFrame::getPayloadByte() {
+  return static_cast<SLPToNP::PayloadByte>(postFrameStruct.command_byte);
+}
+
+std::string_view SLPToNP::PostFrame::getEventName() {
+  return "Post Frame";
+}
