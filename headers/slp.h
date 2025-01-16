@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <fstream>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include "events/game_start.h"
 #include "events/game_end.h"
 #include "events/payloads.h"
@@ -30,11 +31,13 @@ namespace SLPToNP {
       uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
       uint32_t estimateFrameAllocation(uint32_t binarySize);
       void setFrameAllocationEstimate(uint32_t binarySize);
+      void readMetadata(std::ifstream &fin);
     private:
       std::unique_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;
       std::unique_ptr<SLPToNP::GameEnd> gameEnd;
       std::unique_ptr<SLPToNP::FrameWrapper> frames;
+      nlohmann::json metadata;
       void _verifyAndSetPayloadSizes();
       void _readLoop();
   };

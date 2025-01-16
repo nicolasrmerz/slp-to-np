@@ -29,6 +29,7 @@ namespace SLPToNP {
       void _read_ubjson_header();
       //void _readLoop(std::unique_ptr<SLPToNP::SLP> slp);
       void _readLoop();
+      void readMetadata_(const std::unique_ptr<SLPToNP::SLP> &);
   };
 }
 #endif

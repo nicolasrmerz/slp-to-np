@@ -87,3 +87,18 @@ void SLPToNP::SLP::readPayload(std::ifstream &fin) {
 bool SLPToNP::SLP::readFrameData(std::ifstream &fin) {
   return frames->read(fin, payloads);
 }
+
+void SLPToNP::SLP::readMetadata(std::ifstream &fin) {
+  auto curr_location = fin.tellg();
+  fin.seekg(0, fin.end);
+  auto end_location = fin.tellg();
+  // there is a final closing bracket matching the one at the start of the binary
+  // if not ignored, from_ubjson throws an error
+  int ubjson_len = end_location - curr_location - 1;
+  fin.seekg(curr_location, std::ios::beg);
+
+  std::vector<std::byte> ubjson_bytes (ubjson_len); // Use parentheses so that we construct a vector of a certain size
+  fin.read( reinterpret_cast<char*>(ubjson_bytes.data()), static_cast<long>(ubjson_len) );
+
+  metadata = nlohmann::json::from_ubjson(ubjson_bytes);
+}
