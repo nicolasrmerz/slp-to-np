@@ -23,12 +23,30 @@ const char * SLPToNP::BinReaderException::what() const throw () {
   return message.c_str();
 }
 
+SLPToNP::BinReader::BinReader() {};
+
 SLPToNP::BinReader::BinReader(const char* filename) {
+  open(filename);
+}
+
+void SLPToNP::BinReader::open(const char* filename) {
   struct stat buffer;   
   if (stat (filename, &buffer) != 0) {
     throw SLPToNP::BinReaderException("Filename does not exist.");
   }
+  if (fin.is_open())
+    fin.close();
+
   fin.open(filename);
+
+  slp = std::make_unique<SLPToNP::SLP>();
+
+  fin.seekg(0, std::ios::beg);
+  _read_ubjson_header();
+
+  readMetadata_(slp);
+
+  slp->readPayload(fin);
 }
 
 void SLPToNP::BinReader::_read_ubjson_header() {
@@ -92,16 +110,16 @@ void SLPToNP::BinReader::readMetadata_(const std::unique_ptr<SLPToNP::SLP> &) {
   fin.seekg(currPos);
 }
 
+std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
+  slp->initFrameWrapper();
+
+  _readLoop();
+
+  return std::move(slp);
+}
+
 std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read(int32_t startFrame, int32_t endFrame) {
-  slp = std::make_unique<SLPToNP::SLP>(startFrame, endFrame);
-
-  fin.seekg(0, std::ios::beg);
-  _read_ubjson_header();
-
-  readMetadata_(slp);
-
-  slp->readPayload(fin);
-  slp->setFrameAllocationEstimate(slpLen);
+  slp->initFrameWrapper(startFrame, endFrame);
 
   _readLoop();
 
@@ -114,8 +132,4 @@ uint32_t SLPToNP::BinReader::getNumFrames() {
 
   throw SLPToNP::BinReaderException("getNumFrames called for NULL slp.");
 
-}
-
-std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
-  return read(minFrame - 1, minFrame - 1);
 }

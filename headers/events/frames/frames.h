@@ -25,6 +25,7 @@ namespace SLPToNP {
   class FrameWrapper {
     public:
       FrameWrapper();
+      FrameWrapper(uint32_t numFrames);
       FrameWrapper(int32_t startFrame, int32_t endFrame);
       bool read(std::ifstream &fin, const std::unique_ptr<SLPToNP::Payloads> & payloads);
       void allocateVectors(uint32_t allocateSize);

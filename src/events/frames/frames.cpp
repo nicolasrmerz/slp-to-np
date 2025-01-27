@@ -15,6 +15,11 @@ SLPToNP::FrameWrapper::FrameWrapper() {
   endFrame = minFrame - 1;
 }
 
+SLPToNP::FrameWrapper::FrameWrapper(uint32_t numFrames) {
+  FrameWrapper();
+  allocateVectors(numFrames);
+}
+
 void SLPToNP::FrameWrapper::_checkFrameStartEnd(int32_t start_frame, int32_t end_frame) {
 
   if (start_frame >= minFrame && end_frame >= minFrame) {
@@ -44,6 +49,8 @@ SLPToNP::FrameWrapper::FrameWrapper(int32_t start_frame, int32_t end_frame) {
   if (endFrame >= minFrame) {
     frameNumberEndExists = true;
   }
+
+  allocateVectors(static_cast<uint32_t>(end_frame - start_frame));
 }
 
 void SLPToNP::FrameWrapper::allocateVectors(uint32_t allocateSize) {

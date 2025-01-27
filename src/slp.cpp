@@ -13,56 +13,23 @@ SLPToNP::SLP::SLP() {
   gameStart = std::make_unique<SLPToNP::GameStart>();
   gameEnd = std::make_unique<SLPToNP::GameEnd>();
   payloads = std::make_unique<SLPToNP::Payloads>();
-  frames = std::make_unique<SLPToNP::FrameWrapper>();
-}
-
-SLPToNP::SLP::SLP(int32_t startFrame, int32_t endFrame) {
-  gameStart = std::make_unique<SLPToNP::GameStart>();
-  gameEnd = std::make_unique<SLPToNP::GameEnd>();
-  payloads = std::make_unique<SLPToNP::Payloads>();
-  if (startFrame < minFrame && endFrame < minFrame) {
-    frames = std::make_unique<SLPToNP::FrameWrapper>();
-  } else {
-    frames = std::make_unique<SLPToNP::FrameWrapper>(startFrame, endFrame);
-  }
 }
 
 SLPToNP::SLP::~SLP() {
+}
+
+void SLPToNP::SLP::initFrameWrapper() {
+  frames = std::make_unique<SLPToNP::FrameWrapper>(numFrames);
+}
+
+void SLPToNP::SLP::initFrameWrapper(int32_t startFrame, int32_t endFrame) {
+  frames = std::make_unique<SLPToNP::FrameWrapper>(startFrame, endFrame);
 }
 
 void SLPToNP::SLP::_verifyAndSetPayloadSizes() {
   gameStart->setPayloadSize(payloads);
 
   gameEnd->setPayloadSize(payloads);
-}
-
-uint32_t SLPToNP::SLP::estimateFrameAllocation(uint32_t binarySize) {
-  uint32_t singleFrameSize{0};
-  uint32_t repeatFrameSize{0};
-  std::vector<SLPToNP::PayloadByte> singleFrames = {SLPToNP::PAYLOADS, SLPToNP::GAMESTART, SLPToNP::GAMEEND};
-  std::vector<SLPToNP::PayloadByte> repeatFrames = {SLPToNP::PREFRAME, SLPToNP::POSTFRAME, SLPToNP::FRAMESTART, SLPToNP::ITEMUPDATE, SLPToNP::FRAMEBOOKEND};
-
-  for (auto & singleFrameByte : singleFrames) {
-    singleFrameSize += payloads->getPayloadSize(singleFrameByte);
-  }
-
-  for (auto & repeatFrameByte : repeatFrames) {
-    repeatFrameSize += payloads->getPayloadSize(repeatFrameByte);
-  }
-
-  return (binarySize - singleFrameSize) / repeatFrameSize;
-}
-
-void SLPToNP::SLP::setFrameAllocationEstimate(uint32_t binarySize) {
-  uint32_t frameEstimate{};
-  // If frames has been initialized with a start and end frame, we only need a vector of that length
-  if (frames->getFrameSubsetLength() > -1) {
-    frameEstimate = static_cast<uint32_t>(frames->getFrameSubsetLength());
-  } else {
-    frameEstimate = estimateFrameAllocation(binarySize);
-  }
-
-  frames->allocateVectors(frameEstimate);
 }
 
 uint16_t SLPToNP::SLP::getPayloadSize(SLPToNP::PayloadByte payloadByte) {

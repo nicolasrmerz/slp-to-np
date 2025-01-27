@@ -22,17 +22,16 @@ namespace SLPToNP {
   class SLP {
     public:
       SLP();
-      SLP(int32_t startFrame, int32_t endFrame);
       ~SLP();
       void readPayload(std::ifstream &fin);
       void readGameStart(std::ifstream &fin);
       void readGameEnd(std::ifstream &fin);
       bool readFrameData(std::ifstream &fin);
       uint16_t getPayloadSize(SLPToNP::PayloadByte payloadByte);
-      uint32_t estimateFrameAllocation(uint32_t binarySize);
-      void setFrameAllocationEstimate(uint32_t binarySize);
       void readMetadata(std::ifstream &fin);
       uint32_t getNumFrames();
+      void initFrameWrapper();
+      void initFrameWrapper(int32_t startFrame, int32_t endFrame);
     private:
       std::unique_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;

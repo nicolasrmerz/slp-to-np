@@ -19,7 +19,9 @@ namespace SLPToNP {
 
   class BinReader {
     public:
+      BinReader();
       BinReader(const char* filename);
+      void open(const char* filename);
       std::unique_ptr<SLPToNP::SLP> read();
       std::unique_ptr<SLPToNP::SLP> read(int32_t startFrame, int32_t endFrame);
       uint32_t getNumFrames();
