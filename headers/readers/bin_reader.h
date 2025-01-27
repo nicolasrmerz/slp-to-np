@@ -22,6 +22,7 @@ namespace SLPToNP {
       BinReader(const char* filename);
       std::unique_ptr<SLPToNP::SLP> read();
       std::unique_ptr<SLPToNP::SLP> read(int32_t startFrame, int32_t endFrame);
+      uint32_t getNumFrames();
     private:
       std::unique_ptr<SLPToNP::SLP> slp;
       uint32_t slpLen;

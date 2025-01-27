@@ -32,12 +32,14 @@ namespace SLPToNP {
       uint32_t estimateFrameAllocation(uint32_t binarySize);
       void setFrameAllocationEstimate(uint32_t binarySize);
       void readMetadata(std::ifstream &fin);
+      uint32_t getNumFrames();
     private:
       std::unique_ptr<SLPToNP::Payloads> payloads;
       std::unique_ptr<SLPToNP::GameStart> gameStart;
       std::unique_ptr<SLPToNP::GameEnd> gameEnd;
       std::unique_ptr<SLPToNP::FrameWrapper> frames;
       nlohmann::json metadata;
+      uint32_t numFrames;
       void _verifyAndSetPayloadSizes();
       void _readLoop();
   };

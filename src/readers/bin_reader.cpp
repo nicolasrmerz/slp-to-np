@@ -108,10 +108,13 @@ std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read(int32_t startFrame, int32
   return std::move(slp);
 }
 
-// void SLPToNP::BinReader::getNumFrames() {
-//   if 
+uint32_t SLPToNP::BinReader::getNumFrames() {
+  if (slp)
+    return slp->getNumFrames();
 
-// }
+  throw SLPToNP::BinReaderException("getNumFrames called for NULL slp.");
+
+}
 
 std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
   return read(minFrame - 1, minFrame - 1);

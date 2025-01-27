@@ -101,4 +101,10 @@ void SLPToNP::SLP::readMetadata(std::ifstream &fin) {
   fin.read( reinterpret_cast<char*>(ubjson_bytes.data()), static_cast<long>(ubjson_len) );
 
   metadata = nlohmann::json::from_ubjson(ubjson_bytes);
+
+  numFrames = metadata["lastFrame"];
+}
+
+uint32_t SLPToNP::SLP::getNumFrames() {
+  return numFrames;
 }
