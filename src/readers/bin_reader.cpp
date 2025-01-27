@@ -5,6 +5,7 @@
 #include "slp.h"
 #include <sys/stat.h>
 #include <cstring>
+#include <iostream>
 
 //{U\x03raw[$U#l
 static constexpr uint8_t ubjson_magic_bytes[] = {
@@ -78,27 +79,39 @@ void SLPToNP::BinReader::_readLoop() {
 }
 
 void SLPToNP::BinReader::readMetadata_(const std::unique_ptr<SLPToNP::SLP> &) {
+  auto currPos = fin.tellg();
   uint8_t buf[10] = {0};
+
+  fin.seekg(slpLen, std::ios::cur);
   fin.read(reinterpret_cast<char*>(buf), sizeof(uint8_t)*10);
   if(memcmp(metadata_magic_bytes, buf, std::size(metadata_magic_bytes)) != 0)
     throw SLPToNP::BinReaderException("Did not find expected metadata bytes before metadata UBJSON.");
 
   slp->readMetadata(fin);
+
+  fin.seekg(currPos);
 }
 
 std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read(int32_t startFrame, int32_t endFrame) {
   slp = std::make_unique<SLPToNP::SLP>(startFrame, endFrame);
+
+  fin.seekg(0, std::ios::beg);
   _read_ubjson_header();
+
+  readMetadata_(slp);
 
   slp->readPayload(fin);
   slp->setFrameAllocationEstimate(slpLen);
 
   _readLoop();
 
-  readMetadata_(slp);
-
   return std::move(slp);
 }
+
+// void SLPToNP::BinReader::getNumFrames() {
+//   if 
+
+// }
 
 std::unique_ptr<SLPToNP::SLP> SLPToNP::BinReader::read() {
   return read(minFrame - 1, minFrame - 1);
